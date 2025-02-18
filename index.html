@@ -12,6 +12,7 @@
         .container {
             display: flex;
             justify-content: center;
+            align-items: center;
             gap: 20px;
             flex-wrap: wrap;
             margin-top: 20px;
@@ -22,6 +23,7 @@
             border: 2px dashed #ccc;
             padding: 10px;
             background-color: #f9f9f9;
+            text-align: center;
         }
         .word {
             padding: 10px;
@@ -43,31 +45,20 @@
             max-width: 600px;
             margin: auto;
         }
+        #successMessage {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: black;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h2>Classe les mots dans la bonne catégorie</h2>
     <p>Glisse les mots dans la bonne boîte : « Principes éthiques de l'IA » ou « Autres concepts liés à l'IA »</p>
     
-    <div id="wordContainer">
-        <div class="word" draggable="true">Équité</div>
-        <div class="word" draggable="true">Justice</div>
-        <div class="word" draggable="true">Biais</div>
-        <div class="word" draggable="true">Respect</div>
-        <div class="word" draggable="true">Sécurité</div>
-        <div class="word" draggable="true">Vie privée</div>
-        <div class="word" draggable="true">Transparence</div>
-        <div class="word" draggable="true">Responsabilité</div>
-        <div class="word" draggable="true">Fiabilité</div>
-        <div class="word" draggable="true">Droits humains</div>
-        <div class="word" draggable="true">Inclusion</div>
-        <div class="word" draggable="true">Discrimination</div>
-        <div class="word" draggable="true">Optimisation</div>
-        <div class="word" draggable="true">Automatisation</div>
-        <div class="word" draggable="true">Big Data</div>
-        <div class="word" draggable="true">Machine Learning</div>
-        <div class="word" draggable="true">Précision</div>
-    </div>
+    <div id="wordContainer"></div>
     
     <div class="container">
         <div class="category" id="ethical">
@@ -78,12 +69,47 @@
         </div>
     </div>
     
+    <p id="successMessage">Bravo ! Tu peux passer à la suite.</p>
+    
     <script>
         const correctEthical = ["Équité", "Justice", "Biais", "Respect", "Sécurité", "Vie privée", "Transparence", "Responsabilité", "Fiabilité", "Droits humains", "Inclusion", "Discrimination"];
         const correctTechnical = ["Optimisation", "Automatisation", "Big Data", "Machine Learning", "Précision"];
         
+        const allWords = [...correctEthical, ...correctTechnical];
+        allWords.sort(() => Math.random() - 0.5); // Mélanger les mots aléatoirement
+        
+        const wordContainer = document.getElementById("wordContainer");
+        allWords.forEach(word => {
+            const wordElement = document.createElement("div");
+            wordElement.classList.add("word");
+            wordElement.draggable = true;
+            wordElement.innerText = word;
+            wordContainer.appendChild(wordElement);
+        });
+        
         const words = document.querySelectorAll('.word');
         const categories = document.querySelectorAll('.category');
+        const successMessage = document.getElementById("successMessage");
+        
+        function checkCompletion() {
+            let allCorrect = true;
+            
+            document.querySelectorAll("#ethical .word").forEach(word => {
+                if (!correctEthical.includes(word.innerText)) {
+                    allCorrect = false;
+                }
+            });
+            
+            document.querySelectorAll("#technical .word").forEach(word => {
+                if (!correctTechnical.includes(word.innerText)) {
+                    allCorrect = false;
+                }
+            });
+            
+            if (allCorrect && document.querySelectorAll(".word").length === (correctEthical.length + correctTechnical.length)) {
+                successMessage.style.display = "block";
+            }
+        }
         
         words.forEach(word => {
             word.addEventListener('dragstart', (e) => {
@@ -102,7 +128,7 @@
             category.addEventListener('drop', (e) => {
                 e.preventDefault();
                 const data = e.dataTransfer.getData('text');
-                const droppedWord = Array.from(words).find(w => w.innerText === data);
+                const droppedWord = Array.from(document.querySelectorAll('.word')).find(w => w.innerText === data);
                 if (droppedWord) {
                     category.appendChild(droppedWord);
                     
@@ -112,10 +138,11 @@
                     } else {
                         droppedWord.classList.remove("incorrect");
                     }
+                    
+                    checkCompletion();
                 }
             });
         });
     </script>
 </body>
 </html>
-
