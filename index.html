@@ -12,12 +12,13 @@
         .container {
             display: flex;
             justify-content: center;
-            gap: 50px;
+            gap: 20px;
+            flex-wrap: wrap;
             margin-top: 20px;
         }
         .category {
-            width: 300px;
-            min-height: 300px;
+            width: 250px;
+            min-height: 250px;
             border: 2px dashed #ccc;
             padding: 10px;
             background-color: #f9f9f9;
@@ -28,10 +29,19 @@
             background-color: lightblue;
             border-radius: 5px;
             cursor: grab;
+            max-width: 200px;
+            text-align: center;
         }
         .incorrect {
             background-color: red !important;
             color: white;
+        }
+        #wordContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 600px;
+            margin: auto;
         }
     </style>
 </head>
